@@ -44,18 +44,6 @@ solpos = location.get_solarposition(timestamp)
 # Calculate AOI
 aoi = irradiance.aoi(tilt, azimuth, solpos['apparent_zenith'], solpos['azimuth'])
 
-# Calculate the length of the shadow
-shadow_length = table_height_tilt_adjusted * np.tan(np.radians(aoi))
-
-# Calculate inter-table distance
-inter_table_distance = (shadow_length + module_width).item()
-
-if np.isnan(inter_table_distance) or np.isinf(inter_table_distance):
-    st.error("Inter-table distance calculation resulted in an invalid number. Please check your inputs.")
-    st.stop()
-
-#st.write(f'Inter-table distance: {inter_table_distance} m')
-
 #clearsky irradiance values
 datetime = pd.date_range(date, periods=24, freq='H', tz=timezone)
 # Calculate solar position
@@ -66,13 +54,20 @@ clearsky = location.get_clearsky(datetime)
 ghi=clearsky['ghi']
 st.write(ghi)
 
+# Calculate the length of the shadow
+shadow_length = (table_height_tilt_adjusted * np.tan(np.radians(aoi))).item()
+
+# Calculate inter-table distance
+inter_table_distance = shadow_length + module_width
+
+if np.isnan(inter_table_distance) or np.isinf(inter_table_distance):
+    st.error("Inter-table distance calculation resulted in an invalid number. Please check your inputs.")
+    st.stop()
+
 st.write(f'Inter-table distance: {inter_table_distance} m')
 
 # Plot
 fig, ax = plt.subplots()
-
-# Print inter_table_distance for debugging
-st.write(f'Inter-table distance (debug): {inter_table_distance}')
 
 # Create array of table positions
 try:
@@ -80,7 +75,6 @@ try:
 except ValueError:
     st.error("Failed to create table positions array. Please check your inputs.")
     st.stop()
-
 
 ax.plot(table_positions, [table_height_tilt_adjusted, table_height_tilt_adjusted], label='PV Tables')
 ax.plot([0, shadow_length], [table_height_tilt_adjusted, 0], label='Shadow')
