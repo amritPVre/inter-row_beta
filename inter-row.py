@@ -11,8 +11,8 @@ import pandas as pd
 st.title('Solar PV Array Inter-table Distance Calculator')
 
 # User inputs
-latitude = st.number_input('Enter latitude:', value=23.00)
-longitude = st.number_input('Enter longitude:', value=58.00)
+latitude = st.number_input('Enter latitude:', value=22.50)
+longitude = st.number_input('Enter longitude:', value=73.80)
 date = st.date_input('Select date:', datetime.now())
 time = st.time_input('Select time:', datetime.now())
 tilt = st.number_input('Enter tilt angle (degrees):', value=20.0)
