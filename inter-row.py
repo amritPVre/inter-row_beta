@@ -48,7 +48,13 @@ aoi = irradiance.aoi(tilt, azimuth, solpos['apparent_zenith'], solpos['azimuth']
 shadow_length = table_height_tilt_adjusted * np.tan(np.radians(aoi))
 
 # Calculate inter-table distance
-inter_table_distance = shadow_length + module_width
+inter_table_distance = (shadow_length + module_width).item()
+
+if np.isnan(inter_table_distance) or np.isinf(inter_table_distance):
+    st.error("Inter-table distance calculation resulted in an invalid number. Please check your inputs.")
+    st.stop()
+
+#st.write(f'Inter-table distance: {inter_table_distance} m')
 
 #clearsky irradiance values
 datetime = pd.date_range(date, periods=24, freq='H', tz=timezone)
