@@ -65,8 +65,16 @@ st.write(f'Inter-table distance: {inter_table_distance} m')
 # Plot
 fig, ax = plt.subplots()
 
+# Print inter_table_distance for debugging
+st.write(f'Inter-table distance (debug): {inter_table_distance}')
+
 # Create array of table positions
-table_positions = np.array([0, inter_table_distance])
+try:
+    table_positions = np.array([0, inter_table_distance])
+except ValueError:
+    st.error("Failed to create table positions array. Please check your inputs.")
+    st.stop()
+
 
 ax.plot(table_positions, [table_height_tilt_adjusted, table_height_tilt_adjusted], label='PV Tables')
 ax.plot([0, shadow_length], [table_height_tilt_adjusted, 0], label='Shadow')
